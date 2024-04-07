@@ -37,7 +37,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: ./Joffrepruebatatatipodecambio
-          file: ./Joffrepruebatatatipodecambio/Dockerfile
+          context: ./
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/plataformaangular:latest
