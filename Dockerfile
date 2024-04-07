@@ -10,7 +10,7 @@ RUN npm run build
 
 ### Stage 2
 FROM nginx:1.25-alpine
-COPY --from=build /app/dist/tipodecambio /var/www/tipodecambio
+COPY --from=build /app/dist/joffrepruebatatatipodecambio /var/www/joffrepruebatatatipodecambio
 COPY ./src/config/default.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
