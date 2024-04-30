@@ -1,27 +1,31 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { NuevoUsuario } from '../models/nuevo-usuario';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { LoginUsuario } from '../models/login-usuario';
-import { JwtDTO } from '../models/jwt-dto';
+import { environment } from 'src/enviroments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
-
-  authURL= "http:/localhost:8080/auth"
-
+export class AuthService {  tokne_url = environment.token_url;
 
   constructor(private httpClient: HttpClient) { }
 
-  public nuevo(nuevoUsuario: NuevoUsuario): Observable<any>{
-    return this.httpClient.post<any>(this.authURL + "nuevo", nuevoUsuario);
-  }
-
-
-  public login(nuevoUsuario: LoginUsuario): Observable<JwtDTO>{
-    return this.httpClient.post<JwtDTO>(this.authURL + "login", LoginUsuario);
+  public getToken(code: string, code_verifier: string): Observable<any> {
+    let body = new URLSearchParams();
+    body.set('grant_type', environment.grant_type);
+    body.set('client_id', environment.client_id);
+    body.set('redirect_uri', environment.redirect_uri);
+    body.set('scope', environment.scope);
+    body.set('code_verifier', code_verifier);
+    body.set('code', code);
+    const basic_auth = 'Basic '+ btoa('client:secret');
+    const headers_object = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': '*/*',
+      'Authorization': basic_auth
+    });
+    const httpOptions = { headers: headers_object};
+    return this.httpClient.post<any>(this.tokne_url, body, httpOptions);
   }
 
 }

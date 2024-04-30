@@ -1,16 +1,18 @@
+import { AdminComponent } from './components/admin/admin.component';
+import { UserComponent } from './components/user/user.component';
+import { AuthorizedComponent } from './components/authorized/authorized.component';
+import { HomeComponent } from './components/home/home.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UsuariosComponent } from './components/usuarios/usuarios.component';
-import { PerfilesComponent } from './components/perfiles/perfiles.component';
-import { MonedasorigenComponent } from './components/monedasorigen/monedasorigen.component';
-import { TipodecambioComponent } from './components/tipodecambio/tipodecambio.component';
+import { LogoutComponent } from './components/logout/logout.component';
 
 const routes: Routes = [
-  {path:'',pathMatch:'full',redirectTo:'tipodecambio'},
-  {path:'usuarios',component:UsuariosComponent},
-  {path:'perfiles',component:PerfilesComponent},
-  {path:'monedasorigen',component:MonedasorigenComponent},
-  {path:'tipodecambio',component:TipodecambioComponent}
+  { path: '', component: HomeComponent },
+  { path: 'authorized', component: AuthorizedComponent },
+  { path: 'user', component: UserComponent },
+  { path: 'admin', component: AdminComponent },
+  { path: 'logout', component: LogoutComponent },
+  { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 
 @NgModule({

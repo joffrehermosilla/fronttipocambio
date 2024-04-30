@@ -1,8 +1,13 @@
-import { Injectable } from '@angular/core';
 
-const TOKEN_KEY = 'AuthToken';
-const USERNAME_KEY = 'AuthUserName';
-const AUTHORITIES_KEY = 'AuthAuthorities';
+import { Injectable, ɵNOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR } from '@angular/core';
+import * as CryptoJS from 'crypto-js';
+import { environment } from 'src/enviroments/environment';
+
+
+const ACCESS_TOKEN = 'access_token';
+const REFRESH_TOKEN = 'refresh_token';
+const CODE_VERIFIER = 'code_verifier';
+
 
 
 @Injectable({
@@ -11,45 +16,62 @@ const AUTHORITIES_KEY = 'AuthAuthorities';
 
 
 export class TokenService {
-
-  roles: Array<string> = [];
-
   constructor() { }
 
-  public setToken(token: string): void {
-    window.sessionStorage.removeItem(TOKEN_KEY);
-    window.sessionStorage.setItem(TOKEN_KEY, token);
+  setTokens(access_token: string, refresh_token: string): void {
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.setItem(ACCESS_TOKEN, access_token);
+    localStorage.removeItem(REFRESH_TOKEN);
+    localStorage.setItem(REFRESH_TOKEN, refresh_token);
   }
 
-  public getToken(): string {
-    return sessionStorage.getItem(TOKEN_KEY);
+  getAccessToken(): string | null {
+    return localStorage.getItem(ACCESS_TOKEN);
   }
 
-  public setUserName(userName: string): void {
-    window.sessionStorage.removeItem(USERNAME_KEY);
-    window.sessionStorage.setItem(USERNAME_KEY, userName);
+  getRefreshToken(): string | null {
+    return localStorage.getItem(REFRESH_TOKEN);
   }
 
-  public getUserName(): string {
-    return sessionStorage.getItem(USERNAME_KEY);
+  clear(): void {
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN);
   }
 
-  public setAuthorities(authorities: string[]): void {
-    window.sessionStorage.removeItem(AUTHORITIES_KEY);
-    window.sessionStorage.setItem(AUTHORITIES_KEY, JSON.stringify(authorities));
+  isLogged(): boolean {
+    return localStorage.getItem(ACCESS_TOKEN) != null;
   }
 
-  public getAuthorities(): string[] {
-    this.roles = [];
-    if (sessionStorage.getItem(AUTHORITIES_KEY)) {
-      JSON.parse(sessionStorage.getItem(AUTHORITIES_KEY)).forEach(authority => {
-        this.roles.push(authority.authority);
-      });
+  isAdmin(): boolean {
+    if(!this.isLogged()) {
+      return false;
     }
-    return this.roles;
+    const token = this.getAccessToken();
+    const payload = token.split(".")[1];
+    const payloadDecoded = atob(payload);
+    const values = JSON.parse(payloadDecoded);
+    const roles = values.roles;
+    if (roles.indexOf('ROLE_ADMIN') < 0) {
+      return false;
+    }
+    return true;
   }
 
-  public logOut(): void {
-    window.sessionStorage.clear();
+  setVerifier(code_verifier: string): void {
+    if(localStorage.getItem(CODE_VERIFIER)) {
+      this.deleteVerifier();
+    }
+    const encrypted = CryptoJS.AES.encrypt(code_verifier, environment.secret_pkce);
+    localStorage.setItem(CODE_VERIFIER, encrypted.toString());
+  }
+
+  getVerifier(): string {
+    const encrypted = localStorage.getItem(CODE_VERIFIER);
+    const decrypted = CryptoJS.AES.decrypt(encrypted, environment.secret_pkce).toString(CryptoJS.enc.Utf8);
+    return decrypted;
+  }
+
+  deleteVerifier(): void {
+    localStorage.removeItem(CODE_VERIFIER);
   }
 }

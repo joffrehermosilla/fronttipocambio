@@ -1,32 +1,36 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { UsuariosComponent } from './components/usuarios/usuarios.component';
-import { PerfilesComponent } from './components/perfiles/perfiles.component';
-import { MonedasorigenComponent } from './components/monedasorigen/monedasorigen.component';
-import { TipodecambioComponent } from './components/tipodecambio/tipodecambio.component';
-import { LayoutModule } from './layout/layout.module';
-import { FormsModule } from '@angular/forms';
+import { HomeComponent } from './components/home/home.component';
+import { AuthorizedComponent } from './components/authorized/authorized.component';
+import { MenuComponent } from './components/menu/menu.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { UserComponent } from './components/user/user.component';
+import { AdminComponent } from './components/admin/admin.component';
+import { LogoutComponent } from './components/logout/logout.component';
+import { ResourceInterceptor } from './interceptor/resource.interceptor';
+
+
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    UsuariosComponent,
-    PerfilesComponent,
-    MonedasorigenComponent,
-    TipodecambioComponent
-
+    HomeComponent,
+    AuthorizedComponent,
+    MenuComponent,
+    UserComponent,
+    AdminComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    LayoutModule,
     HttpClientModule,
-    FormsModule
+    AppRoutingModule
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: ResourceInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
