@@ -1,5 +1,5 @@
 FROM node:18-alpine as build
-RUN npm install -g npm@10.7.0`
+RUN npm install -g npm@10.7.0
 RUN npm install -g @angular/cli@15.2.9
 RUN npm install crypto-js @types/crypto-js
 RUN mkdir -p /app/node_modules && chown -R node:node /app
